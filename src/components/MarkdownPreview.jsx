@@ -1,8 +1,13 @@
 import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 export default function MarkdownPreview({ result, onDownload, onReset }) {
   const { markdown, filename, wordCount, pageCount } = result
   const [copied, setCopied] = useState(false)
+  const [view, setView] = useState('preview') // 'preview' | 'raw'
 
   const copyToClipboard = async () => {
     try {
@@ -33,12 +38,11 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
         transition: 'all 0.25s ease',
         opacity: copied ? 1 : 0,
         pointerEvents: copied ? 'auto' : 'none',
-        animation: copied ? 'slideToast 0.25s ease forwards' : 'none',
       }}>
         ✓ COPIED TO CLIPBOARD
       </div>
 
-      {/* Stats row */}
+      {/* Stats + actions */}
       <div className="flex items-center justify-between flex-wrap gap-4 border-b border-border pb-5">
         <div className="flex items-center gap-6">
           <Stat label="Pages" value={pageCount} />
@@ -63,8 +67,27 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
         </div>
       </div>
 
+      {/* View toggle */}
+      <div className="flex items-center gap-0" style={{ borderBottom: '1px solid #2a2a2a' }}>
+        {['preview', 'raw'].map(v => (
+          <button
+            key={v}
+            onClick={() => setView(v)}
+            className="font-mono text-xs tracking-widest uppercase px-5 py-2.5 transition-all duration-150"
+            style={{
+              background: view === v ? '#ff5c00' : 'transparent',
+              color: view === v ? '#fff' : '#666',
+              border: 'none',
+              borderRadius: 0,
+            }}
+          >
+            {v === 'preview' ? '⬡ Preview' : '</> Raw'}
+          </button>
+        ))}
+      </div>
+
       {/* Preview panel */}
-      <div style={{ border: '1px solid #2a2a2a', background: '#0d0d0d' }}>
+      <div style={{ border: '1px solid #2a2a2a', background: '#0d0d0d', minHeight: 300 }}>
         {/* Titlebar */}
         <div className="flex items-center justify-between px-4 py-2.5"
           style={{ borderBottom: '1px solid #2a2a2a', background: '#141414' }}>
@@ -74,12 +97,51 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
             <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5c00' }} />
           </div>
           <span className="font-mono text-muted text-xs tracking-wide">{filename}</span>
-          <div className="w-16" />
+          <span className="font-mono text-xs tracking-widest uppercase"
+            style={{ color: view === 'preview' ? '#ff5c00' : '#444', fontSize: 10 }}>
+            {view}
+          </span>
         </div>
-        <pre className="overflow-auto font-mono text-xs leading-relaxed whitespace-pre-wrap break-words p-5"
-          style={{ maxHeight: 500, color: '#c8c4bc', background: '#0d0d0d' }}>
-          {markdown}
-        </pre>
+
+        {/* Content */}
+        <div className="overflow-auto p-6" style={{ maxHeight: 560 }}>
+          {view === 'raw' ? (
+            <pre className="font-mono text-xs leading-relaxed whitespace-pre-wrap break-words"
+              style={{ color: '#c8c4bc' }}>
+              {markdown}
+            </pre>
+          ) : (
+            <div className="folio-md">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || '')
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        style={oneDark}
+                        language={match[1]}
+                        PreTag="div"
+                        customStyle={{ borderRadius: 0, background: '#111', border: '1px solid #2a2a2a', fontSize: 12 }}
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code className={className}
+                        style={{ background: '#1a1a1a', padding: '2px 6px', fontFamily: 'DM Mono, monospace', fontSize: '0.85em', color: '#ff5c00' }}
+                        {...props}>
+                        {children}
+                      </code>
+                    )
+                  },
+                }}
+              >
+                {markdown}
+              </ReactMarkdown>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
@@ -88,13 +150,14 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
 function Stat({ label, value, mono, small }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="font-mono text-muted tracking-widest uppercase"
-        style={{ fontSize: 9 }}>{label}</span>
+      <span className="font-mono text-muted tracking-widest uppercase" style={{ fontSize: 9 }}>
+        {label}
+      </span>
       <span style={{
         fontFamily: mono ? 'DM Mono, monospace' : 'Bebas Neue, sans-serif',
         fontSize: small ? 12 : 20,
         color: '#e8e4dc',
-        letterSpacing: mono ? '0.05em' : '0.05em',
+        letterSpacing: '0.05em',
         lineHeight: 1,
       }}>
         {value}
