@@ -1,121 +1,119 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import DropZone from './components/DropZone'
+import FileInfo from './components/FileInfo'
+import LoadingOverlay from './components/LoadingOverlay'
+import MarkdownPreview from './components/MarkdownPreview'
+import { useConverter } from './hooks/useConverter'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const { file, isLoading, result, selectFile, convert, download, reset } = useConverter()
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen flex flex-col bg-paper">
+      <Header />
 
-      <div className="ticks"></div>
+      <main className="flex-1 max-w-4xl mx-auto w-full px-6 py-12">
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Hero text */}
+        {!result && (
+          <div className="mb-10 animate-fade-in">
+            <h2 className="font-display font-extrabold text-ink text-4xl sm:text-5xl leading-tight tracking-tight">
+              Turn PDFs into<br />
+              <span className="text-accent">clean Markdown.</span>
+            </h2>
+            <p className="font-body text-muted text-base mt-4 max-w-lg leading-relaxed">
+              Upload any PDF — reports, docs, papers — and get structured Markdown with
+              headings, lists, bold/italic, tables, and code blocks. Runs entirely on CPU.
+            </p>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+            {/* Feature pills */}
+            <div className="flex flex-wrap gap-2 mt-5">
+              {[
+                '# Headings',
+                '**Bold** / *Italic*',
+                '- Lists',
+                '| Tables |',
+                '``` Code ```',
+                'OCR fallback',
+              ].map((f) => (
+                <span
+                  key={f}
+                  className="font-mono text-xs border border-border rounded-sm px-3 py-1 text-muted bg-white"
+                >
+                  {f}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Main card */}
+        <div className="card shadow-sm">
+          {isLoading ? (
+            <LoadingOverlay />
+          ) : result ? (
+            <MarkdownPreview result={result} onDownload={download} onReset={reset} />
+          ) : (
+            <div className="flex flex-col gap-4">
+              <DropZone onFileSelect={selectFile} disabled={isLoading} />
+
+              {file && (
+                <>
+                  <FileInfo file={file} onRemove={reset} />
+                  <div className="flex justify-end">
+                    <button onClick={convert} className="btn-primary" disabled={isLoading}>
+                      Convert to Markdown →
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {!file && (
+                <p className="text-center font-body text-muted text-xs">
+                  Supports text-based PDFs · Table extraction · Up to 20 MB
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* How it works — only show before conversion */}
+        {!result && !isLoading && (
+          <section className="mt-14 animate-fade-in">
+            <h3 className="font-display font-bold text-ink text-xl mb-6 tracking-tight">
+              How it works
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[
+                {
+                  step: '01',
+                  title: 'Upload',
+                  desc: 'Drag and drop or browse for a PDF file up to 20 MB.',
+                },
+                {
+                  step: '02',
+                  title: 'Convert',
+                  desc: 'PyMuPDF extracts layout, fonts, and text. Heuristics detect headings, lists, and tables.',
+                },
+                {
+                  step: '03',
+                  title: 'Download',
+                  desc: 'Preview the Markdown in the browser and download the .md file.',
+                },
+              ].map(({ step, title, desc }) => (
+                <div key={step} className="border border-border rounded-sm p-5 bg-white">
+                  <span className="font-mono text-xs text-accent font-bold">{step}</span>
+                  <h4 className="font-display font-semibold text-ink text-base mt-2 mb-1">{title}</h4>
+                  <p className="font-body text-muted text-sm leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+
+      <Footer />
+    </div>
   )
 }
-
-export default App
