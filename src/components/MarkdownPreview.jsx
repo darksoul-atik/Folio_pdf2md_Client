@@ -1,22 +1,39 @@
+import { useState } from 'react'
+
 export default function MarkdownPreview({ result, onDownload, onReset }) {
-  const { markdown, filename, wordCount, pageCount } = result;
+  const { markdown, filename, wordCount, pageCount } = result
+  const [copied, setCopied] = useState(false)
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(markdown);
+      await navigator.clipboard.writeText(markdown)
     } catch {
-      // Fallback for older browsers
-      const el = document.createElement("textarea");
-      el.value = markdown;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
+      const el = document.createElement('textarea')
+      el.value = markdown
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
     }
-  };
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div className="flex flex-col gap-4 animate-slide-up">
+
+      {/* Copied toast */}
+      <div
+        className={`
+          fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+          bg-ink text-paper text-xs font-mono px-4 py-2 rounded-sm shadow-lg
+          transition-all duration-300
+          ${copied ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'}
+        `}
+      >
+        ✓ Copied to clipboard
+      </div>
+
       {/* Stats bar */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-4">
@@ -29,16 +46,10 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={copyToClipboard}
-            className="btn-ghost text-xs py-2 px-4"
-          >
-            Copy
+          <button onClick={copyToClipboard} className="btn-ghost text-xs py-2 px-4">
+            {copied ? '✓ Copied' : 'Copy'}
           </button>
-          <button
-            onClick={onDownload}
-            className="btn-primary text-xs py-2 px-4"
-          >
+          <button onClick={onDownload} className="btn-primary text-xs py-2 px-4">
             Download .md
           </button>
           <button
@@ -69,27 +80,23 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
             <div className="w-2.5 h-2.5 rounded-full bg-accent/60" />
           </div>
           <span className="font-mono text-xs text-muted">{filename}</span>
-          <div className="w-16" /> {/* Spacer */}
+          <div className="w-16" />
         </div>
-        <pre className="overflow-auto max-h-120 p-5 text-xs font-mono text-ink/80 leading-relaxed whitespace-pre-wrap break-words bg-white">
+        <pre className="overflow-auto max-h-[480px] p-5 text-xs font-mono text-ink/80 leading-relaxed whitespace-pre-wrap break-words bg-white">
           {markdown}
         </pre>
       </div>
     </div>
-  );
+  )
 }
 
 function Stat({ label, value, mono }) {
   return (
     <div className="flex flex-col">
-      <span className="font-body text-muted text-xs uppercase tracking-wider">
-        {label}
-      </span>
-      <span
-        className={`text-ink font-semibold text-sm ${mono ? "font-mono" : "font-display"}`}
-      >
+      <span className="font-body text-muted text-xs uppercase tracking-wider">{label}</span>
+      <span className={`text-ink font-semibold text-sm ${mono ? 'font-mono' : 'font-display'}`}>
         {value}
       </span>
     </div>
-  );
+  )
 }
