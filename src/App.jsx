@@ -19,7 +19,7 @@ export default function App() {
         {!result && (
           <div className="mb-10 animate-fade-in">
             <h2 className="font-display font-extrabold text-ink text-4xl sm:text-5xl leading-tight tracking-tight">
-              Turn PDFs into<br />
+              Folio turns PDFs into<br />
               <span className="text-accent">clean Markdown.</span>
             </h2>
             <p className="font-body text-muted text-base mt-4 max-w-lg leading-relaxed">
