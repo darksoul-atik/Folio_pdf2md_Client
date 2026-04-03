@@ -1,41 +1,34 @@
 export default function Header() {
   return (
-    <header className="border-b border-border py-5">
-      <div className="max-w-4xl mx-auto px-6 flex items-center justify-between">
+    <header className="border-b border-border py-4 px-6">
+      <div className="max-w-5xl mx-auto flex items-center justify-between">
 
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-ink rounded-sm flex items-center justify-center flex-shrink-0 relative overflow-hidden">
-            {/* F lettermark */}
-            <span className="font-display font-extrabold text-paper text-lg leading-none">F</span>
-            {/* accent dot */}
-            <span className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-accent" />
+          <div className="relative w-8 h-8 flex-shrink-0">
+            <div className="w-8 h-8 bg-accent flex items-center justify-center">
+              <span className="font-display text-white text-lg leading-none">F</span>
+            </div>
           </div>
-          <div>
-            <h1 className="font-display font-extrabold text-ink text-xl leading-none tracking-tight">
-              Folio
-            </h1>
-            <p className="font-mono text-muted text-xs mt-0.5 tracking-wide">
-              PDF <span className="text-accent">→</span> Markdown
-            </p>
+          <div className="flex flex-col">
+            <span className="font-display text-text-on-dark text-2xl leading-none tracking-wider">
+              FOLIO
+            </span>
+            <span className="font-mono text-muted text-[10px] tracking-widest uppercase">
+              PDF → Markdown
+            </span>
           </div>
         </div>
 
-        {/* Badges */}
-        <div className="hidden sm:flex items-center gap-1.5">
-          <Badge>Open Source</Badge>
-          <Badge>No API Key</Badge>
-          <Badge>CPU Only</Badge>
+        {/* Right badges */}
+        <div className="hidden sm:flex items-center gap-2">
+          {['CPU Only', 'No API Key', 'Open Source'].map(b => (
+            <span key={b} className="font-mono text-[10px] text-muted border border-border px-2 py-1 tracking-widest uppercase">
+              {b}
+            </span>
+          ))}
         </div>
       </div>
     </header>
-  )
-}
-
-function Badge({ children }) {
-  return (
-    <span className="font-mono text-xs text-muted border border-border rounded-sm px-2 py-0.5">
-      {children}
-    </span>
   )
 }

@@ -11,13 +11,8 @@ export default function DropZone({ onFileSelect, disabled }) {
     if (dropped) onFileSelect(dropped)
   }
 
-  const handleDragOver = (e) => {
-    e.preventDefault()
-    setIsDragging(true)
-  }
-
+  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true) }
   const handleDragLeave = () => setIsDragging(false)
-
   const handleInputChange = (e) => {
     const selected = e.target.files?.[0]
     if (selected) onFileSelect(selected)
@@ -30,34 +25,46 @@ export default function DropZone({ onFileSelect, disabled }) {
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onClick={() => !disabled && inputRef.current?.click()}
-      className={`
-        relative border-2 border-dashed rounded-sm p-12
-        flex flex-col items-center justify-center gap-4
-        cursor-pointer transition-all duration-200 select-none
-        ${isDragging
-          ? 'border-accent bg-accent/5 scale-[1.01]'
-          : 'border-border hover:border-ink hover:bg-surface/40'
-        }
-        ${disabled ? 'opacity-40 cursor-not-allowed' : ''}
-      `}
+      className="relative cursor-pointer select-none transition-all duration-200"
+      style={{
+        border: isDragging ? '1px solid #ff5c00' : '1px solid #2a2a2a',
+        background: isDragging ? 'rgba(255,92,0,0.04)' : 'transparent',
+        padding: '56px 24px',
+      }}
     >
-      {/* Icon */}
-      <div className={`transition-transform duration-200 ${isDragging ? 'scale-110' : ''}`}>
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="8" y="4" width="28" height="36" rx="1" stroke="#0e0e0e" strokeWidth="1.5" fill="none"/>
-          <path d="M28 4v10h8" stroke="#0e0e0e" strokeWidth="1.5" strokeLinejoin="round"/>
-          <path d="M16 28h16M16 22h10" stroke="#d4541a" strokeWidth="1.5" strokeLinecap="round"/>
-          <path d="M24 38v8M20 42l4 4 4-4" stroke="#0e0e0e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      </div>
+      {/* Corner accents */}
+      <span className="absolute top-0 left-0 w-4 h-4 border-t border-l"
+        style={{ borderColor: isDragging ? '#ff5c00' : '#444' }} />
+      <span className="absolute top-0 right-0 w-4 h-4 border-t border-r"
+        style={{ borderColor: isDragging ? '#ff5c00' : '#444' }} />
+      <span className="absolute bottom-0 left-0 w-4 h-4 border-b border-l"
+        style={{ borderColor: isDragging ? '#ff5c00' : '#444' }} />
+      <span className="absolute bottom-0 right-0 w-4 h-4 border-b border-r"
+        style={{ borderColor: isDragging ? '#ff5c00' : '#444' }} />
 
-      <div className="text-center">
-        <p className="font-display font-semibold text-ink text-base">
-          {isDragging ? 'Drop it here' : 'Drop your PDF here'}
-        </p>
-        <p className="font-body text-muted text-sm mt-1">
-          or <span className="text-accent underline underline-offset-2">browse files</span> · max 20 MB
-        </p>
+      <div className="flex flex-col items-center gap-4">
+        {/* Icon */}
+        <div className="relative">
+          <svg width="44" height="52" viewBox="0 0 44 52" fill="none">
+            <rect x="1" y="1" width="36" height="46" rx="1"
+              stroke={isDragging ? '#ff5c00' : '#444'} strokeWidth="1"/>
+            <path d="M28 1v12h10" stroke={isDragging ? '#ff5c00' : '#444'} strokeWidth="1"/>
+            <path d="M9 28h20M9 22h14" stroke="#ff5c00" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M38 36v14M34 46l4 4 4-4" stroke={isDragging ? '#ff5c00' : '#888'}
+              strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+
+        <div className="text-center">
+          <p className="font-mono text-text-on-dark text-sm tracking-wide">
+            {isDragging ? 'Drop to convert' : 'Drop PDF here'}
+          </p>
+          <p className="font-mono text-muted text-xs mt-1.5 tracking-wide">
+            or{' '}
+            <span className="text-accent underline underline-offset-2">browse files</span>
+            {' '}· max 20 MB
+          </p>
+        </div>
       </div>
 
       <input

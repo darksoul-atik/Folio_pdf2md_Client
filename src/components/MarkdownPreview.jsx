@@ -20,69 +20,64 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 animate-slide-up">
+    <div className="flex flex-col gap-5 animate-fade-up">
 
-      {/* Copied toast */}
-      <div
-        className={`
-          fixed bottom-6 left-1/2 -translate-x-1/2 z-50
-          bg-ink text-paper text-xs font-mono px-4 py-2 rounded-sm shadow-lg
-          transition-all duration-300
-          ${copied ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2 pointer-events-none'}
-        `}
-      >
-        ✓ Copied to clipboard
+      {/* Toast */}
+      <div style={{
+        position: 'fixed', bottom: 24, left: '50%',
+        transform: 'translateX(-50%)',
+        background: '#ff5c00', color: '#fff',
+        fontFamily: 'DM Mono, monospace',
+        fontSize: 12, letterSpacing: '0.1em',
+        padding: '8px 20px', zIndex: 999,
+        transition: 'all 0.25s ease',
+        opacity: copied ? 1 : 0,
+        pointerEvents: copied ? 'auto' : 'none',
+        animation: copied ? 'slideToast 0.25s ease forwards' : 'none',
+      }}>
+        ✓ COPIED TO CLIPBOARD
       </div>
 
-      {/* Stats bar */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-4">
+      {/* Stats row */}
+      <div className="flex items-center justify-between flex-wrap gap-4 border-b border-border pb-5">
+        <div className="flex items-center gap-6">
           <Stat label="Pages" value={pageCount} />
-          <div className="w-px h-6 bg-border" />
           <Stat label="Words" value={wordCount.toLocaleString()} />
-          <div className="w-px h-6 bg-border" />
-          <Stat label="Output" value={filename} mono />
+          <Stat label="File" value={filename} mono small />
         </div>
-
-        {/* Actions */}
         <div className="flex items-center gap-2">
           <button onClick={copyToClipboard} className="btn-ghost text-xs py-2 px-4">
             {copied ? '✓ Copied' : 'Copy'}
           </button>
-          <button onClick={onDownload} className="btn-primary text-xs py-2 px-4">
+          <button onClick={onDownload} className="btn-primary text-xs py-2 px-5">
             Download .md
           </button>
-          <button
-            onClick={onReset}
-            className="text-muted hover:text-accent transition-colors duration-150 ml-1"
-            aria-label="Convert another file"
-            title="Convert another file"
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path
-                d="M3 9a6 6 0 1 0 1.5-3.9M3 5v4h4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+          <button onClick={onReset}
+            className="ml-1 text-muted hover:text-accent transition-colors duration-150 p-1"
+            title="Convert another file">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 8a6 6 0 1 0 1.4-3.6M2 4.5v4h4"
+                stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
         </div>
       </div>
 
       {/* Preview panel */}
-      <div className="card p-0 overflow-hidden">
-        <div className="flex items-center justify-between border-b border-border px-4 py-2.5">
+      <div style={{ border: '1px solid #2a2a2a', background: '#0d0d0d' }}>
+        {/* Titlebar */}
+        <div className="flex items-center justify-between px-4 py-2.5"
+          style={{ borderBottom: '1px solid #2a2a2a', background: '#141414' }}>
           <div className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-border" />
-            <div className="w-2.5 h-2.5 rounded-full bg-border" />
-            <div className="w-2.5 h-2.5 rounded-full bg-accent/60" />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#2a2a2a' }} />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#2a2a2a' }} />
+            <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5c00' }} />
           </div>
-          <span className="font-mono text-xs text-muted">{filename}</span>
+          <span className="font-mono text-muted text-xs tracking-wide">{filename}</span>
           <div className="w-16" />
         </div>
-        <pre className="overflow-auto max-h-[480px] p-5 text-xs font-mono text-ink/80 leading-relaxed whitespace-pre-wrap break-words bg-white">
+        <pre className="overflow-auto font-mono text-xs leading-relaxed whitespace-pre-wrap break-words p-5"
+          style={{ maxHeight: 500, color: '#c8c4bc', background: '#0d0d0d' }}>
           {markdown}
         </pre>
       </div>
@@ -90,11 +85,18 @@ export default function MarkdownPreview({ result, onDownload, onReset }) {
   )
 }
 
-function Stat({ label, value, mono }) {
+function Stat({ label, value, mono, small }) {
   return (
-    <div className="flex flex-col">
-      <span className="font-body text-muted text-xs uppercase tracking-wider">{label}</span>
-      <span className={`text-ink font-semibold text-sm ${mono ? 'font-mono' : 'font-display'}`}>
+    <div className="flex flex-col gap-0.5">
+      <span className="font-mono text-muted tracking-widest uppercase"
+        style={{ fontSize: 9 }}>{label}</span>
+      <span style={{
+        fontFamily: mono ? 'DM Mono, monospace' : 'Bebas Neue, sans-serif',
+        fontSize: small ? 12 : 20,
+        color: '#e8e4dc',
+        letterSpacing: mono ? '0.05em' : '0.05em',
+        lineHeight: 1,
+      }}>
         {value}
       </span>
     </div>
