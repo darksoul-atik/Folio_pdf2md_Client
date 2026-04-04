@@ -18,7 +18,7 @@
 
 *A professional, dark-themed web interface for converting PDFs to clean GitHub-flavored Markdown.*
 
-[Live Demo](https://folio-xxxxx.web.app) · [Backend Repo](https://github.com/yourusername/folio_backend) · [Report Bug](https://github.com/yourusername/folio_frontend/issues)
+[Live Demo](https://folio-pdf2md.web.app) · [Backend Repo](https://github.com/darksoul-atik/Folio_pdf2md_server) · [Report Bug](https://github.com/darksoul-atik/Folio_pdf2md/issues)
 
 </div>
 
@@ -27,16 +27,6 @@
 ## ✦ Overview
 
 Folio's frontend is a modern single-page React application that provides a complete PDF-to-Markdown conversion experience directly in the browser. Upload a PDF, watch it convert, preview the result in rendered GitHub-style Markdown, edit if needed, and download — all in one place.
-
----
-
-## ✦ Screenshots
-
-> *Dark mode — the default experience*
-
-| Upload | Converting | Preview |
-|--------|-----------|---------|
-| Drag & drop zone with corner accents | Animated scan-line loading | 4-mode preview panel |
 
 ---
 
@@ -127,14 +117,14 @@ folio_frontend/
 ### Prerequisites
 - Node.js 18+
 - npm or yarn
-- [Folio Backend](https://github.com/yourusername/folio_backend) running
+- [Folio Backend](https://github.com/darksoul-atik/Folio_pdf2md_server) running
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/folio_frontend.git
-cd folio_frontend
+git clone https://github.com/darksoul-atik/Folio_pdf2md.git
+cd Folio_pdf2md
 
 # Install dependencies
 npm install
@@ -153,7 +143,7 @@ VITE_API_URL=http://localhost:8000/api
 
 For production, replace with your deployed backend URL:
 ```env
-VITE_API_URL=https://folio-backend.onrender.com/api
+VITE_API_URL=https://folio-backend-8t8a.onrender.com/api
 ```
 
 ### Running Locally
@@ -163,6 +153,8 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173)
+
+> Make sure the backend is running at `http://localhost:8000` before starting the frontend.
 
 ### Building for Production
 
@@ -197,7 +189,7 @@ firebase init
 firebase deploy
 ```
 
-Your app will be live at `https://folio-xxxxx.web.app`
+Live at → [https://folio-pdf2md.web.app](https://folio-pdf2md.web.app)
 
 ---
 
@@ -249,7 +241,7 @@ Response:
 
 > The FastAPI backend that powers the conversion engine.
 
-🔗 [github.com/yourusername/folio_backend](https://github.com/yourusername/folio_backend)
+🔗 [github.com/darksoul-atik/Folio_pdf2md_server](https://github.com/darksoul-atik/Folio_pdf2md_server)
 
 ---
 
